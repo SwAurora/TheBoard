@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface BoardMapper {
-    List<BoardVO> getBoardList(Map<String, Integer> map);
+    List<BoardVO> getBoardList(Map<String, String> map);
 
     Integer getTotalCount();
+
+    List<BoardVO> boardListSearch(Map<String, String> map);
+
+    Integer boardListSearchCount(Map<String, String> map);
 }

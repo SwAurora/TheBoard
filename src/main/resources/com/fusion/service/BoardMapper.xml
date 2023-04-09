@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fusion.service.BoardMapper">
-<!--    <resultMap type="com.fusion.domain.BoardVO" id="board">-->
-<!--        <id column="B_NO" property="b_no"/>-->
-<!--        <result column="TITLE" property="title"/>-->
-<!--        <result column="CONTENT" property="content"/>-->
-<!--        <result column="WRITER" property="writer"/>-->
-<!--        <result column="REGDATE" property="regdate"/>-->
-<!--        <result column="VIEWCNT" property="viewcnt"/>-->
-<!--        <result column="TYPE" property="type"/>-->
-<!--        <result column="DEL" property="del"/>-->
-<!--    </resultMap>-->
 
     <select id="getBoardList" parameterType="map" resultType="com.fusion.domain.BoardVO">
         SELECT B.b_no,
@@ -39,12 +29,79 @@
 
     <select id="getTotalCount" resultType="int">
         SELECT SUM(1)
-          FROM BOARD_TBL
-         WHERE EXISTS(
-            SELECT *
-              FROM BOARD_TBL
-             WHERE TYPE = '1'
-               AND DEL = 'N'
-        )
+        FROM BOARD_TBL
+        WHERE EXISTS(SELECT *
+                     FROM BOARD_TBL
+                     WHERE TYPE = '1' AND DEL = 'N')
     </select>
+
+    <select id="boardListSearch" parameterType="map" resultType="com.fusion.domain.BoardVO">
+        SELECT B.b_no,
+               B.title,
+               B.content,
+               M.name as writer,
+               B.regdate,
+               B.viewcnt,
+               B.type,
+               B.del
+        FROM (SELECT b_no,
+                     title,
+                     content,
+                     writer,
+                     regdate,
+                     viewcnt,
+                     type,
+                     del
+              FROM BOARD_TBL
+              WHERE del = 'N'
+                AND type = '1'
+                <if test='searchType.equals("2")'>
+                AND title like '%'||#{search}||'%'
+                </if>
+                <if test='searchType.equals("3")'>
+                AND content like '%'||#{search}||'%'
+                </if>
+              ORDER BY b_no DESC) B
+                 INNER JOIN MEMBER_TBL M ON WRITER = M_NO
+                <if test='searchType.equals("4")'>
+                    WHERE M.name like '%'||#{search}||'%'
+                </if>
+                <if test='searchType.equals("1")'>
+                    WHERE title like '%'||#{search}||'%'
+                    OR content like '%'||#{search}||'%'
+                    OR M.name like '%'||#{search}||'%'
+                </if>
+        OFFSET ${start} ROWS FETCH FIRST ${row} ROWS ONLY
+    </select>
+
+    <select id="boardListSearchCount" parameterType="map" resultType="int">
+        SELECT count(*)
+        FROM (SELECT b_no,
+                    title,
+                    content,
+                    writer,
+                    regdate,
+                    viewcnt,
+                    type,
+                    del
+                    FROM BOARD_TBL
+                    WHERE del = 'N'
+                    AND type = '1'
+                    <if test='searchType.equals("2")'>
+                        AND title like '%'||#{search}||'%'
+                    </if>
+                    <if test='searchType.equals("3")'>
+                        AND content like '%'||#{search}||'%'
+                    </if>
+                    INNER JOIN MEMBER_TBL M ON WRITER = M_NO
+                    <if test='searchType.equals("4")'>
+                        WHERE M.name like '%'||#{search}||'%'
+                    </if>
+                    <if test='searchType.equals("1")'>
+                        WHERE title like '%'||#{search}||'%'
+                        OR content like '%'||#{search}||'%'
+                        OR M.name like '%'||#{search}||'%'
+                    </if>
+    </select>
+    
 </mapper>

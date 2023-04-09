@@ -20,22 +20,42 @@ public class BoardController {
     BoardServiceImpl boardService;
 
     @RequestMapping(value = "/board", method = RequestMethod.GET)
-    public String boardList(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer row,  Model model) {
+    public String boardList(@RequestParam(required = false) Integer page,
+                            @RequestParam(required = false) Integer row,
+                            @RequestParam(required = false) Integer searchType,
+                            @RequestParam(required = false) String search,
+                            Model model) {
         page = (page != null ? page : 1);
         row = (row != null ? row : 10);
         int start = (page - 1) * row;
 
-        Map<String, Integer> map = new HashMap<>();
-        map.put("start", start);
-        map.put("row" ,row);
+        String type = (searchType != null ? String.valueOf(searchType) : "");
+        String searchInput = (search != null ? search : "");
 
-        List<BoardVO> boardList = boardService.getBoardList(map);
+        Map<String, String> map = new HashMap<>();
+        map.put("start", String.valueOf(start));
+        map.put("row", String.valueOf(row));
 
-        Integer tcnt = boardService.getTotalCount();
+        List<BoardVO> boardList;
+        int tcnt;
+
+        if(search != null) {
+            map.put("searchType", String.valueOf(searchType));
+            map.put("search", search);
+            boardList = boardService.boardListSearch(map);
+            tcnt = boardService.boardListSearchCount(map);
+        }
+        else {
+            boardList = boardService.getBoardList(map);
+            tcnt = boardService.getTotalCount();
+        }
+
         model.addAttribute("boardList", boardList);
         model.addAttribute("nowPage", page);
         model.addAttribute("row", row);
         model.addAttribute("tcnt", tcnt);
+        model.addAttribute("searchType", type);
+        model.addAttribute("search", searchInput);
         return "/WEB-INF/jsp/board/list";
     }
 }

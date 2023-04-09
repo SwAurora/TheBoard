@@ -14,6 +14,14 @@
         #sel {
             width: 100px;
         }
+
+        #sel2 {
+            width: 100px;
+        }
+
+        #searchInput {
+            width: 300px;
+        }
     </style>
 </head>
 <body>
@@ -34,6 +42,9 @@
     nowBlock = (int) Math.ceil((double) nowPage / pagePerBlock);
     pageStart = (nowBlock - 1) * pagePerBlock + 1;
     pageEnd = Math.min((pageStart + (pagePerBlock - 1)), totalPage);
+
+    String searchType = (String) request.getAttribute("searchType");
+    String search = (String) request.getAttribute("search");
 %>
 <h1>게시판</h1>
 <form action="/board" method="get" id="form1">
@@ -43,19 +54,9 @@
         <option value="50">50</option>
         <option value="100">100</option>
     </select>
+    <input type="hidden" name="searchType" value="<%=searchType%>">
+    <input type="hidden" name="search" value="<%=search%>">
 </form>
-<%
-    String getRow = request.getParameter("row");
-    if(getRow != null)
-    {
-%>
-<script>
-    let sel = document.getElementById('sel');
-    sel.value = <%=getRow%>;
-</script>
-<%
-    }
-%>
 <table class="table text-center">
     <tr>
         <th>번호</th>
@@ -72,19 +73,41 @@
         </tr>
     </c:forEach>
 </table>
+<form action="/board" method="get" id="form2" class="d-flex justify-content-center mb-3">
+    <select name="searchType" class="form-select" aria-label="Default select" id="sel2">
+        <option value="1" selected>전체</option>
+        <option value="2">제목</option>
+        <option value="3">내용</option>
+        <option value="4">작성자</option>
+    </select>
+    <label for="searchInput"></label><input type="text" class="form-control" id="searchInput" name="search" placeholder="검색어를 입력해주세요." required>
+    <button type="submit" class="btn btn-secondary">검색</button>
+    <input type="hidden" name="row" value="<%=row%>">
+</form>
+<%
+
+    if(!searchType.equals("") && !search.equals("")) {
+%>
+<script>
+    document.getElementById('sel2').value = '<%=searchType%>';
+    document.getElementById('searchInput').value = '<%=search%>';
+</script>
+<%
+    }
+%>
 <nav aria-level="Page Navigation" class="d-flex justify-content-center">
     <ul class="pagination">
         <%
             if(nowPage == 1) {
         %>
         <li class="page-item disabled">
-            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage - 1%>">PREV</a>
+            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage - 1%>&searchType=<%=searchType%>&search=<%=search%>">PREV</a>
         </li>
         <%
         } else {
         %>
         <li class="page-item">
-            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage - 1%>">PREV</a>
+            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage - 1%>&searchType=<%=searchType%>&search=<%=search%>">PREV</a>
         </li>
         <%
             }
@@ -93,7 +116,7 @@
         %>
         <li class="page-item">
             <a class="page-link active"
-               href="/board?row=<%=row%>&page=<%=pageStart%>"><%=pageStart%>
+               href="/board?row=<%=row%>&page=<%=pageStart%>&searchType=<%=searchType%>&search=<%=search%>"><%=pageStart%>
             </a>
         </li>
         <%
@@ -101,7 +124,7 @@
         %>
         <li class="page-item">
             <a class="page-link"
-               href="/board?row=<%=row%>&page=<%=pageStart%>"><%=pageStart%>
+               href="/board?row=<%=row%>&page=<%=pageStart%>&searchType=<%=searchType%>&search=<%=search%>"><%=pageStart%>
             </a>
         </li>
         <%
@@ -110,13 +133,13 @@
             if(nowPage >= totalPage) {
         %>
         <li class="page-item disabled">
-            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage + 1%>">NEXT</a>
+            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage + 1%>&searchType=<%=searchType%>&search=<%=search%>">NEXT</a>
         </li>
         <%
         } else {
         %>
         <li class="page-item">
-            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage + 1%>">NEXT</a>
+            <a class="page-link" href="/board?row=<%=row%>&page=<%=nowPage + 1%>&searchType=<%=searchType%>&search=<%=search%>">NEXT</a>
         </li>
         <%
             }
@@ -124,9 +147,12 @@
     </ul>
 </nav>
 <script>
+    let sel = document.getElementById('sel');
+    sel.value = <%=row%>;
+
     let form1 = document.getElementById('form1');
     sel.addEventListener('change', function () {
-       form1.submit();
+        form1.submit();
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"

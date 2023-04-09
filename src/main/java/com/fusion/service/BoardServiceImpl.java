@@ -13,11 +13,19 @@ public class BoardServiceImpl{
     @Autowired
     BoardMapper boardMapper;
 
-    public List<BoardVO> getBoardList(Map<String, Integer> map) {
+    public List<BoardVO> getBoardList(Map<String, String> map) {
         return boardMapper.getBoardList(map);
     }
 
     public Integer getTotalCount() {
         return boardMapper.getTotalCount();
+    }
+
+    public List<BoardVO> boardListSearch(Map<String, String> map) {
+        return boardMapper.boardListSearch(map);
+    }
+
+    public Integer boardListSearchCount(Map<String, String> map) {
+        return boardMapper.boardListSearchCount(map);
     }
 }
