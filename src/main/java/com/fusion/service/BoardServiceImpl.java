@@ -1,6 +1,7 @@
 package com.fusion.service;
 
 import com.fusion.domain.BoardVO;
+import com.fusion.domain.ReplyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +28,9 @@ public class BoardServiceImpl{
 
     public Integer boardListSearchCount(Map<String, String> map) {
         return boardMapper.boardListSearchCount(map);
+    }
+
+    public List<ReplyVO> getReplyList(int b_no) {
+        return boardMapper.getReplyList(b_no);
     }
 }

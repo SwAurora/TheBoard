@@ -103,5 +103,24 @@
                         OR M.name like '%'||#{search}||'%'
                     </if>
     </select>
-    
+
+    <select id="getReplyList" parameterType="int" resultType="com.fusion.domain.ReplyVO">
+        SELECT ROWNUM AS RN,
+               B_NO,
+               R_NO,
+               PARENT_NO,
+               LEVEL,
+               CONTENT,
+               WRITER,
+               M.NAME,
+               REGDATE,
+               DEL
+        FROM REPLY_TBL R
+                 INNER JOIN MEMBER_TBL M on M.M_NO = R.WRITER
+        WHERE DEL = 'N'
+          AND B_NO = ${b_no}
+            START WITH PARENT_NO = 0
+        CONNECT BY PRIOR R_NO = PARENT_NO
+        ORDER SIBLINGS BY R_NO
+    </select>
 </mapper>
