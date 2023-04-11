@@ -9,7 +9,7 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:/mybatis-config.xml"/>
-        <property name="mapperLocations" value="classpath:/com/fusion/service/BoardMapper.xml"/>
+        <property name="mapperLocations" value="classpath:/com/fusion/service/*.xml"/>
     </bean>
 
     <bean id="dataSource" name="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
