@@ -75,33 +75,34 @@
     </select>
 
     <select id="boardListSearchCount" parameterType="map" resultType="int">
-        SELECT count(*)
+        SELECT COUNT(*)
         FROM (SELECT b_no,
-                    title,
-                    content,
-                    writer,
-                    regdate,
-                    viewcnt,
-                    type,
-                    del
-                    FROM BOARD_TBL
-                    WHERE del = 'N'
-                    AND type = '1'
-                    <if test='searchType.equals("2")'>
-                        AND title like '%'||#{search}||'%'
-                    </if>
-                    <if test='searchType.equals("3")'>
-                        AND content like '%'||#{search}||'%'
-                    </if>
-                    INNER JOIN MEMBER_TBL M ON WRITER = M_NO
-                    <if test='searchType.equals("4")'>
-                        WHERE M.name like '%'||#{search}||'%'
-                    </if>
-                    <if test='searchType.equals("1")'>
-                        WHERE title like '%'||#{search}||'%'
-                        OR content like '%'||#{search}||'%'
-                        OR M.name like '%'||#{search}||'%'
-                    </if>
+        title,
+        content,
+        writer,
+        regdate,
+        viewcnt,
+        type,
+        del
+        FROM BOARD_TBL
+        WHERE del = 'N'
+        AND type = '1'
+        <if test='searchType.equals("2")'>
+            AND title like '%'||#{search}||'%'
+        </if>
+        <if test='searchType.equals("3")'>
+            AND content like '%'||#{search}||'%'
+        </if>
+        ORDER BY b_no DESC) B
+        INNER JOIN MEMBER_TBL M ON WRITER = M_NO
+        <if test='searchType.equals("4")'>
+            WHERE M.name like '%'||#{search}||'%'
+        </if>
+        <if test='searchType.equals("1")'>
+            WHERE title like '%'||#{search}||'%'
+            OR content like '%'||#{search}||'%'
+            OR M.name like '%'||#{search}||'%'
+        </if>
     </select>
 
     <select id="getReplyList" parameterType="int" resultType="com.fusion.domain.ReplyVO">

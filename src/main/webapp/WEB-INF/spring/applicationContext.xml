@@ -19,5 +19,9 @@
         <property name="password" value="1234"/>
     </bean>
 
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="uploadTempDir" value="/temp"/>
+    </bean>
+
     <mybatis:scan base-package="com.fusion.service"/>
 </beans>
